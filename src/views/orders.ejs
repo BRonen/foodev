@@ -13,13 +13,27 @@
         margin: 10px 20px;
         border-radius: 20px;
     }
-    main .buttons{
+    main .horizontal{
         display: flex;
+    }
+    main .reverse{
         flex-flow: row-reverse;
+    }
+    main .pagination{
+        column-gap: 10px;
+        width: 100%;
+    }
+    main .pagination button{
+        width: 100%;
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 20px;
+        font-size: 1.3rem;
+        cursor: pointer;
     }
 </style>
 <main>
-    <div class="buttons">
+    <div class="horizontal reverse">
         <a class="linkToAdmin" href="/admin">
             <img src="https://img.icons8.com/external-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto/64/000000/external-plus-multimedia-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto.png"/>
         </a>
@@ -27,6 +41,40 @@
     <% orders.forEach(order => { %>
         <%- include('./partials/orderCard', { order }) %>
     <% }) %>
+    <div class="horizontal pagination">
+        <button id="previousPageButton" onClick="previousPage()"> Anterior </button>
+        <button id="nextPageButton" onClick="nextPage()"> Próxima </button>
+    </div>
 </main>
+
+<script>
+    window.addEventListener('load', () => {
+        //if current page is 0 or less then we will get an error
+        if(getCurrentPage() > 1){
+            return
+        }
+        const button = document.querySelector('#previousPageButton')
+        button.disabled = true
+    })
+    function getCurrentPage(){
+        const anchor = document.createElement("a")
+        anchor.href = window.location.href
+
+        const params = new URLSearchParams(anchor.search)
+        const page = parseInt(params.get('page'))
+
+        return page
+    }
+    function previousPage(){
+        const page = getCurrentPage() - 1
+
+        window.location.search = '?page='+ page
+    }
+    function nextPage(){
+        const page = getCurrentPage() + 1
+
+        window.location.search = '?page='+ page
+    }
+</script>
 
 <%- include('./partials/foot') %>

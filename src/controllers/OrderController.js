@@ -2,7 +2,20 @@ const Order = require('../models/Order')
 
 module.exports = {
   async index(req, res){
+    const page = (parseInt(req.query.page) - 1) || 0
+
+    if(page < 0){
+      const error = {
+        status: '400',
+        message: 'Solicitado página inexistente.'
+      }
+      return res.render('error', {error})
+    }
+
     const orders = await Order.find()
+    .limit(8)
+    .skip(8 * page)
+    .sort( '-createdOn' )
 
     console.log( orders )
 
