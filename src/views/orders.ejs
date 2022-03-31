@@ -1,0 +1,32 @@
+<%- include('./partials/head') %>
+<%- include('./stylesheets/header') %>
+<%- include('./stylesheets/orderCard') %>
+<%- include('./partials/header') %>
+
+<style>
+    main{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+
+        padding: 20px 30px;
+        margin: 10px 20px;
+        border-radius: 20px;
+    }
+    main .buttons{
+        display: flex;
+        flex-flow: row-reverse;
+    }
+</style>
+<main>
+    <div class="buttons">
+        <a class="linkToAdmin" href="/admin">
+            <img src="https://img.icons8.com/external-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto/64/000000/external-plus-multimedia-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto.png"/>
+        </a>
+    </div>
+    <% orders.forEach(order => { %>
+        <%- include('./partials/orderCard', { order }) %>
+    <% }) %>
+</main>
+
+<%- include('./partials/foot') %>

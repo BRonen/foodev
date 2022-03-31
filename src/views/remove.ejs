@@ -1,0 +1,66 @@
+<%- include('./partials/head') %>
+<%- include('./stylesheets/header') %>
+<%- include('./stylesheets/orderCard') %>
+<%- include('./partials/header') %>
+
+<style>
+    main{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        
+        align-items: center;
+    
+        padding: 20px 30px;
+        margin: 10px 20px;
+        border-radius: 20px;
+    }
+    main .buttons{
+        display: flex;
+        column-gap: 10px;
+        width: 100%;
+    }
+    main .buttons a{
+        width: 100%;
+    }
+    main .buttons a button{
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 20px;
+        font-size: 1.3rem;
+        cursor: pointer;
+
+        width: 100%;
+    }
+</style>
+
+<main>
+    <h1>Tem certeza de que quer apagar esse pedido?</h1>
+    <div class="buttons">
+        <a href="/orders">
+            <button onClick="orderDelete()">Sim</button>
+        </a>
+        <a href="/order/<%= order._id %>">
+            <button>Não</button>
+        </a>
+    </div>
+</main>
+
+<script>
+    async function orderDelete(){
+        
+        const response = await fetch('/order/<%= order._id %>', {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        const data = await response.json()
+
+        console.log(data)
+        
+        alert('aaaaaaa')
+    }
+</script>
+
+<%- include('./partials/foot') %>

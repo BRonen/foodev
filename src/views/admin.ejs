@@ -1,0 +1,177 @@
+<%- include('./partials/head') %>
+<%- include('./stylesheets/header') %>
+<%- include('./stylesheets/orderCard') %>
+<%- include('./partials/header') %>
+
+<style>
+    main {
+        margin: 20px;
+    }
+    hr{
+        margin: 15px 10px;
+    }
+    .orderForm .customerInputs{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+    .orderForm .customerInputs input{
+        border-radius: 15px;
+        padding: 5px;
+        font-size: 1.4rem;
+    }
+    main img{
+        margin-left: 10px;
+    }
+    .orderForm .orderInputs{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+    .orderForm .orderInputs *{
+        border-radius: 15px;
+        padding: 5px;
+        font-size: 1.4rem;
+    }
+    main button{
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 20px;
+        font-size: 1.3rem;
+        cursor: pointer;
+    }
+    main .orderPreview{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+    main .dishes{
+        display: flex;
+        flex-flow: row wrap;
+        gap: 10px;
+    }
+    main .dishes .dish{
+        padding: 5px 10px;
+        border-radius: 25px;
+        background-color: #F0F0F0;
+    }
+</style>
+<main>
+    <div class="orderForm">
+        <h1>Anotar pedido</h1>
+
+        <hr/>
+
+        <div class="customerInputs">
+            <input onChange="updateCustomerInfo()" id="name" placeholder="Nome do cliente:" />
+            <input onChange="updateCustomerInfo()" id="address" placeholder="Endereço:"/>
+            <input onChange="updateCustomerInfo()" id="phone" placeholder="Número de celular:" type="phone"/>
+        </div>
+        
+        <hr/>
+
+        <img onClick="addDish()" align="right" src="https://img.icons8.com/external-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto/32/000000/external-plus-multimedia-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto.png"/>
+        
+        <div class="orderInputs">
+            <input id="dishName" placeholder="Nome da refeição:" />
+            <textarea id="dishNotes" placeholder="Observações:"></textarea>
+            <input id="dishPrice" placeholder="Valor:" type="number" min="0.00" max="50.00" step="0.01"/>
+        </div>
+
+        <hr/>
+
+        <div class="orderPreview">
+            <div>
+                <h1 class="previewCustomerName"></h1>
+                <h2 class="previewCustomerAddress"></h2>
+                <h2 class="previewCustomerPhone"></h2>
+            </div>
+            <div class="dishes">
+                
+            </div>
+            <h2 class="previewPrice"></h2>
+        </div>
+
+        <a href="/orders">
+            <button onClick="sendOrder()">Salvar pedido</button>
+        </a>
+    </div>
+</main>
+
+<script>
+    const dishes = []
+
+    function addDish(){
+        const dish = {}
+
+        dish.name = document.querySelector('#dishName').value
+        dish.notes = document.querySelector('#dishNotes').value
+        dish.price = document.querySelector('#dishPrice').value
+
+        dishes.push(dish)
+
+        updateDishList()
+    }
+
+    function updateDishList(){
+        let tmpHTML = ''
+        let totalPrice = 0
+
+        dishes.forEach(({name, notes, price}) => {
+            tmpHTML += `
+                <div class="dish"><p>
+                    <h2>${name}</h2>
+                        Observações: ${notes || 'sem observações.'}
+                    </p>
+                    <h2 align="right"> R$${price},00 </h2>
+                </div>
+            `
+            totalPrice += parseInt(price)
+        })
+
+        
+        document.querySelector('.dishes').innerHTML = tmpHTML
+
+        document.querySelector('.previewPrice').innerHTML = `Total: R$${totalPrice},00`
+    }
+
+    function updateCustomerInfo(){
+        const name = document.querySelector('#name').value
+        const address = document.querySelector('#address').value
+        const phone = document.querySelector('#phone').value
+
+        document.querySelector('.previewCustomerName').innerHTML = name
+        document.querySelector('.previewCustomerAddress').innerHTML = address
+        document.querySelector('.previewCustomerPhone').innerHTML = phone
+    }
+    async function sendOrder(){
+        const customer = {
+            name: document.querySelector('#name').value,
+            phone: document.querySelector('#phone').value
+        }
+        const address = document.querySelector('#address').value
+        const status = 'em preparo'
+        const payment = 'dinheiro'
+        const bodyContent = {
+            dishes,
+            customer,
+            address,
+            status,
+            payment
+        }
+
+        const response = await fetch('/orders', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyContent)
+        })
+        const data = await response.json()
+        console.log(data)
+        alert('Pedido salvo com sucesso.')
+    }
+</script>
+
+<%- include('./partials/foot') %>

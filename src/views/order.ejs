@@ -1,0 +1,131 @@
+<%- include('./partials/head') %>
+<%- include('./stylesheets/header') %>
+<%- include('./stylesheets/orderCard') %>
+<%- include('./partials/header') %>
+
+<style>
+    main{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+
+        padding: 20px 30px;
+        margin: 10px 20px;
+        border-radius: 20px;
+    }
+    main .top{
+        display: flex;
+        column-gap: 10px;
+    }
+    main .top .statusImg{
+        aspect-ratio: 1 / 1;
+    }
+    main .dishes{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+    main .dishes .dish{
+        padding: 5px 10px;
+        border-radius: 25px;
+        background-color: #F0F0F0;
+    }
+    main .payment{
+        display: flex;
+    }
+</style>
+<main>
+    <div class="top">
+        <div class="statusImg">
+            <% switch (order.status){
+                case 'em preparo': %>
+                    <img alt="status" src="https://img.icons8.com/external-others-pike-picture/50/000000/external-bottle-mayonnaise-spice-sauce-others-pike-picture-15.png"/>
+                <% break;
+                case 'em entrega': %>
+                    <img alt="status" src="https://img.icons8.com/color/64/000000/ok--v1.png"/>
+                <% break;
+                case 'finalizado': %>
+                    <img alt="status" src="https://img.icons8.com/ios-filled/64/000000/meal.png"/>
+                <% break;
+            } %>
+        </div>
+        <div class="customerInfos">
+            <h2> <%= order.customer.name %> </h1>
+            <a href="https://www.google.com/maps?q=<%= order.address.replace(/\s/g, '+') %>">
+                <h3> <%= order.address %> </h2>
+            </a>
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="dishes">
+        <% order.dishes.forEach( dish => {%>
+            <div class="dish"><p>
+                <h2><%= dish.dish %></h2>
+                    Observações: <%= dish.notes || 'nenhuma observação.' %>
+                </p>
+                <h2 align="right"> R$<%= dish.price %>,00 </h2>
+            </div>
+        <% } )%>
+        
+        <h2> Total: R$<%= totalPrice %>,00</h2>
+    </div>
+
+    <hr/>
+
+    <% if( order.payment.method ){ %>
+        <p>
+            <h2><%= order.payment.method %>: </h2><%= order.payment.notes || 'Sem anotações' %>
+        </p>
+        
+        <hr/>
+    <% } %>
+
+    <div class="customerLinks">
+        <a href="tel:<%= order.customer.phone %>">
+            <img src="https://img.icons8.com/ios-filled/60/000000/apple-phone.png"/>
+        </a>
+        <a href="https://api.whatsapp.com/send?phone=55<%= order.customer.phone %>&text=Seu%20pedido%20chegou.">
+            <img src="https://img.icons8.com/ios-glyphs/60/000000/whatsapp.png"/>
+        </a>
+
+        <% switch (order.status){
+                case 'em preparo': %>
+                    <a href="/orders">
+                        <img onClick="orderReadyToDeliver()" align="right" src="https://img.icons8.com/external-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto/60/000000/external-minus-multimedia-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto.png"/>
+                    </a>
+                <% break;
+                case 'em entrega': %>
+                    <a class="paymentButton" href="/order/<%= order._id %>/payment">
+                        <img align="right" src="https://img.icons8.com/external-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto/60/000000/external-minus-multimedia-yogi-aprelliyanto-basic-outline-yogi-aprelliyanto.png"/>
+                    </a>
+                <% break;
+                case 'finalizado': %>
+                <a href="/order/<%= order._id %>/remove">
+                    <img align="right" src="https://img.icons8.com/ios-glyphs/90/000000/filled-trash.png"/>
+                </a>
+                <% break;
+            } %>
+    </div>
+</main>
+
+<script>
+    async function orderReadyToDeliver(){
+        const bodyContent = {
+            status: 'em entrega'
+        }
+        const response = await fetch('/order/<%= order._id %>', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyContent)
+        })
+        const data = await response.json()
+        console.log(data)
+    }
+</script>
+
+<%- include('./partials/foot') %>

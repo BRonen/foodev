@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose')
 
 const OrderSchema = new Schema({
   dishes: [{
-    dish: {
+    name: {
       type: String,
       required: true,
     },
@@ -16,8 +16,12 @@ const OrderSchema = new Schema({
     }
   }],
   payment: {
-      type: String,
-      required: true,
+      method: {
+        type: String,
+      },
+      notes: {
+        type: String,
+      },
   },
   customer: {
       name: {

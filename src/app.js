@@ -1,5 +1,6 @@
 const express = require('express')
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+const path = require('path')
 
 const router = require('./routes')
 
@@ -13,6 +14,8 @@ mongoose.connect(process.env.MONGO_URI, {
 class App{
   constructor(){
     this.express = express()
+    this.express.set('views', path.join(__dirname, 'views'))
+    this.express.set('view engine', 'ejs')
 
     this.middlewares()
     this.routes()
@@ -23,8 +26,7 @@ class App{
   }
 
   routes(){
-    this.express.use(express.static('public'))
-    this.express.use('/api', router)
+    this.express.use('/', router)
   }
 }
 

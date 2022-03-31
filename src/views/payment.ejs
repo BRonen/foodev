@@ -1,0 +1,104 @@
+<%- include('./partials/head') %>
+<%- include('./stylesheets/header') %>
+<%- include('./stylesheets/orderCard') %>
+<%- include('./partials/header') %>
+
+<style>
+    main{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    
+        padding: 20px 30px;
+        margin: 10px 20px;
+        border-radius: 20px;
+    }
+    main .top{
+        display: flex;
+        column-gap: 10px;
+    }
+    .paymentInput{
+        border-radius: 15px;
+        padding: 5px;
+        font-size: 1.4rem;
+    }
+    main a{
+        width: 100%;
+    }
+    main a button{
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 20px;
+        font-size: 1.3rem;
+        cursor: pointer;
+        
+        width: 100%;
+    }
+</style>
+
+<main>
+    <div class="top">
+        <div class="statusImg">
+            <% switch (order.status){
+                case 'em preparo': %>
+                    <img alt="status" src="https://img.icons8.com/color/64/000000/ok--v1.png"/>
+                <% break;
+                case 'Pedido recebido': %>
+                    <img alt="status" src="https://img.icons8.com/ios-filled/64/000000/meal.png"/>
+                <% break;
+            } %>
+        </div>
+        <div class="customerInfos">
+            <h2> <%= order.customer.name %> </h1>
+            <h3> <%= order.address %> </h2>
+        </div>
+    </div>
+
+    <hr/>
+
+    <select id="paymentMethod" class="paymentInput">
+        <option value="cart&atilde;o" selected>cartão</option>
+        <option value="dinheiro">dinheiro</option>
+    </select>
+    <textarea id="paymentNotes" class="paymentInput" placeholder="Anotações:"></textarea>
+
+    <hr/>
+
+    <a href="/order/<%= order._id %>">
+        <button onClick="orderPay()">Finalizar</button>
+    </a>
+    <a href="/order/<%= order._id %>/remove">
+        <img onClick="orderDelete()" align="right" src="https://img.icons8.com/ios-glyphs/90/000000/filled-trash.png"/>
+    </a>
+</main>
+
+<script>
+    async function orderPay(){
+        const paymentMethod = document.querySelector('#paymentMethod').value
+        const paymentNotes = document.querySelector('#paymentNotes').value
+
+        const bodyContent = {
+            payment: {
+                method: paymentMethod,
+                notes: paymentNotes
+            },
+            status: 'finalizado'
+        }
+
+        const response = await fetch('/order/<%= order._id %>', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyContent)
+        })
+
+        const data = await response.json()
+        console.log(data)
+
+        alert('Pedido finalizado.')
+    }
+</script>
+
+<%- include('./partials/foot') %>

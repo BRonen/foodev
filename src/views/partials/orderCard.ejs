@@ -1,0 +1,23 @@
+<a class="orderCard" href="/order/<%= order._id %>">
+    <div class="orderStatus">
+        <% switch (order.status){
+            case 'em preparo': %>
+                <img alt="status" src="https://img.icons8.com/external-others-pike-picture/64/000000/external-bottle-mayonnaise-spice-sauce-others-pike-picture-15.png"/>
+            <% break;
+            case 'em entrega': %>
+                <img alt="status" src="https://img.icons8.com/color/64/000000/ok--v1.png"/>
+            <% break;
+            case 'finalizado': %>
+                <img alt="status" src="https://img.icons8.com/ios-filled/64/000000/meal.png"/>
+            <% break;
+        } %>
+    </div>
+    <div class="customerInfos">
+        <h3 class="customerName">
+            <%= order.customer.name %>
+        </h2>
+        <h4 class="customerAddress">
+            <%= order.address %>
+        </h4>
+    </div>
+</a>
